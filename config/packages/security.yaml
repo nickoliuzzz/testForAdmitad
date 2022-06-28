@@ -17,4 +17,5 @@ security:
 
     access_control:
          - { path: ^/api/url, roles: ROLE_USER }
+         - { path: ^/api/statistic, roles: ROLE_USER }
 
