@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Dto\StatisticDto;
 use App\Entity\ShortUrl;
+use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -42,5 +45,28 @@ class ShortUrlRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getStatistic(StatisticDto $statisticDto): int
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('count(s.id)');
+
+        if ($statisticDto->createdAt !== null) {
+            $queryBuilder
+                ->andWhere('s.createdAt >= :createdAtStartDay')
+                ->setParameter('createdAtStartDay', $statisticDto->createdAt)
+                ->andWhere('s.createdAt < :createdAtStartNextDay')
+                ->setParameter('createdAtStartNextDay', (new DateTimeImmutable($statisticDto->createdAt))->modify('+1 day'));
+        }
+
+        if ($statisticDto->userEmail) {
+            $queryBuilder
+                ->leftJoin('s.user', 'u')
+                ->andWhere('u.email = :userEmail')
+                ->setParameter('userEmail', $statisticDto->userEmail);
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }

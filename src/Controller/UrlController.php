@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class UrlController extends CustomAbstractController
 {
     #[Route('/api/url', name: 'api_url_create', methods: Request::METHOD_POST)]
-    public function index(#[CurrentUser] User $user, Request $request, UrlService $urlService): JsonResponse
+    public function execute(#[CurrentUser] User $user, Request $request, UrlService $urlService): JsonResponse
     {
         $form = $this->getForm(UrlType::class, $request);
 
