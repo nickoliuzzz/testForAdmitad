@@ -13,6 +13,8 @@ use Throwable;
 
 class UrlService
 {
+    private const TRIES_COUNT = 5;
+
     public function __construct(private ShortUrlRepository $shortUrlRepository)
     {
     }
@@ -20,13 +22,12 @@ class UrlService
     public function createShortUuid(UrlDto $urlDto, User $user): ShortUrl
     {
         try {
-
             $url = new ShortUrl($user, $this->getUniqueToken(), $urlDto->url);
 
             $this->shortUrlRepository->add($url, true);
         } catch (ClientOrientedException $clientOrientedException) {
             throw $clientOrientedException;
-        } catch (UniqueConstraintViolationException ) {
+        } catch (UniqueConstraintViolationException) {
             throw new ClientOrientedException('Something went wrong. Try again.');
         }
 
@@ -35,7 +36,7 @@ class UrlService
 
     private function getUniqueToken(): string
     {
-        $triesCount = 5;
+        $triesCount = self::TRIES_COUNT;
 
         while ($triesCount-- > 0) {
             $token = uniqid();
