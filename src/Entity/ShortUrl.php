@@ -44,4 +44,9 @@ class ShortUrl
     {
         return $this->token;
     }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
 }

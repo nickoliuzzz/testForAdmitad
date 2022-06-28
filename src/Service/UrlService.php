@@ -9,7 +9,6 @@ use App\Exceptions\ClientOrientedException;
 use App\Exceptions\InfrastructureException;
 use App\Repository\ShortUrlRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Exception;
 use Throwable;
 
 class UrlService
@@ -29,8 +28,6 @@ class UrlService
             throw $clientOrientedException;
         } catch (UniqueConstraintViolationException ) {
             throw new ClientOrientedException('Something went wrong. Try again.');
-        } catch (Throwable) {
-            throw new InfrastructureException();
         }
 
         return $url;
